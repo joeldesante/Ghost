@@ -10,6 +10,15 @@ const {metaData} = require('../services/proxy');
 const _ = require('lodash');
 const getMetaDataExcerpt = metaData.getMetaDataExcerpt;
 
+function escapeHTMLString(html) {
+    return html.replace(/&/g, '&amp;')
+        .replace(/</g, '&lt;')
+        .replace(/>/g, '&gt;')
+        .replace(/"/g, '&quot;')
+        .replace(/'/g, '&#39;');
+    // NOTE: Code used above is referenced from https://www.educative.io/answers/how-to-escape-unescape-html-characters-in-string-in-javascript. Is there a better/more robust way of doing this? For now, this should be sufficent...
+}
+
 module.exports = function excerpt(options) {
     let truncateOptions = (options || {}).hash || {};
 
@@ -22,6 +31,8 @@ module.exports = function excerpt(options) {
     } else {
         excerptText = '';
     }
+    
+    excerptText = escapeHTMLString(excerptText);
 
     truncateOptions = _.reduce(truncateOptions, (_truncateOptions, value, key) => {
         if (['words', 'characters'].includes(key)) {
